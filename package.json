@@ -149,7 +149,7 @@
       "activitybar": [
         {
           "id": "chatgpt",
-          "title": "ChatGPT AI",
+          "title": "Projexity AI",
           "icon": "resources/icon.png"
         }
       ]
@@ -159,12 +159,12 @@
         {
           "type": "webview",
           "id": "chatgpt-ai.chatView",
-          "name": "ChatGPT AI"
+          "name": "Projexity AI"
         }
       ]
     },
     "configuration": {
-      "title": "ChatGPT AI",
+      "title": "Projexity AI",
       "type": "object",
       "properties": {
         "chatgpt-ai.apiKey": {

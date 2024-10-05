@@ -76,12 +76,12 @@ export function activate(context: vscode.ExtensionContext) {
 					}
 				})
 		),
-		vscode.commands.registerCommand('chatgpt-ai.explain', () => commandHandler('promptPrefix.explain')),
-		vscode.commands.registerCommand('chatgpt-ai.refactor', () => commandHandler('promptPrefix.refactor')),
-		vscode.commands.registerCommand('chatgpt-ai.optimize', () => commandHandler('promptPrefix.optimize')),
-		vscode.commands.registerCommand('chatgpt-ai.findProblems', () => commandHandler('promptPrefix.findProblems')),
-		vscode.commands.registerCommand('chatgpt-ai.documentation', () => commandHandler('promptPrefix.documentation')),
-		vscode.commands.registerCommand('chatgpt-ai.complete', () => commandHandler('promptPrefix.complete')),
+		// vscode.commands.registerCommand('chatgpt-ai.explain', () => commandHandler('promptPrefix.explain')),
+		// vscode.commands.registerCommand('chatgpt-ai.refactor', () => commandHandler('promptPrefix.refactor')),
+		// vscode.commands.registerCommand('chatgpt-ai.optimize', () => commandHandler('promptPrefix.optimize')),
+		// vscode.commands.registerCommand('chatgpt-ai.findProblems', () => commandHandler('promptPrefix.findProblems')),
+		// vscode.commands.registerCommand('chatgpt-ai.documentation', () => commandHandler('promptPrefix.documentation')),
+		// vscode.commands.registerCommand('chatgpt-ai.complete', () => commandHandler('promptPrefix.complete')),
 		vscode.commands.registerCommand('chatgpt-ai.resetConversation', () => provider.resetConversation())
 	);
 
@@ -245,6 +245,7 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 				case 'webviewLoaded':
 					{
 						this._view?.webview.postMessage({ type: 'setWorkingState', value: this._workingState });
+
 						// this.loadAwesomePrompts();
 						break;
 					}
@@ -363,118 +364,128 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 
 	public async askWithContext(task: string, context: string): Promise<void> {
 		this._task = task || "";
-
+	
 		if (!this._chatGPTAPI) {
 			this._newAPI();
 		}
 
-		// show chat view
-		this._view?.show?.(!this._view);
-
+		let project = "AI Interviewer";
+		let ticket = "Make backend prompts for interviewer better";
+		let ticketRequirements = "Backend prompts are clear and consise and do the job"
+	
+		// Define the system prompt to guide ChatGPT's behavior
+		const systemPrompt = `You are assisting a student with their project as a tutor. The project is "${project}" and the task is "${ticket}". The requirements are: "${ticketRequirements}". You must provide guidance and help the student understand the concepts without giving direct answers. Avoid giving a complete solution directly, but use helpful examples and explanations to teach the student.`;
+	
+		// Don't include the system prompt in the user-facing message
 		let searchPrompt: string;
 		let languageId: string;
-
+	
 		switch (context) {
-		  case 'selection':
-			const selection = vscode.window.activeTextEditor?.selection;
-			const selectedText = selection && vscode.window.activeTextEditor?.document.getText(selection);
-			languageId = this._settings.codeblockWithLanguageId
-			  ? vscode.window.activeTextEditor?.document?.languageId || ""
-			  : "";
-			searchPrompt = selectedText ? `${task}\n${"```"}${languageId}\n${selectedText}\n${"```"}\n` : task;
-			break;
-		  case 'whole_file':
-			const activeDoc = vscode.window.activeTextEditor?.document;
-			languageId = this._settings.codeblockWithLanguageId ? activeDoc?.languageId || "" : "";
-			const fileContent = activeDoc ? activeDoc.getText() : "";
-			searchPrompt = `${task}\n${"```"}${languageId}\n${fileContent}\n${"```"}\n`;
-			break;
-		  case 'all_opened_files':
-			const activeTabGroup = vscode.window.tabGroups.activeTabGroup;
-			const tabs = activeTabGroup.tabs;
-		
-			if (tabs.length > 0) {
-			  let mergedContent = '';
-			  const copiedFiles: string[] = [];
-		
-			  for (const tab of tabs) {
-				const uri = (tab.input as vscode.TabInputText).uri;
-				if (uri && uri.scheme === 'file') {
-				  const filename = uri.fsPath;
-				  const content = await vscode.workspace.fs.readFile(uri);
-				  mergedContent += `## ${filename}\n\n\`\`\`\n${content}\n\`\`\`\n\n`;
-				  copiedFiles.push(filename);
+			case 'selection':
+				const selection = vscode.window.activeTextEditor?.selection;
+				const selectedText = selection && vscode.window.activeTextEditor?.document.getText(selection);
+				languageId = this._settings.codeblockWithLanguageId
+					? vscode.window.activeTextEditor?.document?.languageId || ""
+					: "";
+				searchPrompt = selectedText ? `${task}\n${"```"}${languageId}\n${selectedText}\n${"```"}\n` : task;
+				break;
+			case 'whole_file':
+				const activeDoc = vscode.window.activeTextEditor?.document;
+				languageId = this._settings.codeblockWithLanguageId ? activeDoc?.languageId || "" : "";
+				const fileContent = activeDoc ? activeDoc.getText() : "";
+				searchPrompt = `${task}\n${"```"}${languageId}\n${fileContent}\n${"```"}\n`;
+				break;
+			case 'all_opened_files':
+				const activeTabGroup = vscode.window.tabGroups.activeTabGroup;
+				const tabs = activeTabGroup.tabs;
+	
+				if (tabs.length > 0) {
+					let mergedContent = '';
+					const copiedFiles: string[] = [];
+	
+					for (const tab of tabs) {
+						const uri = (tab.input as vscode.TabInputText).uri;
+						if (uri && uri.scheme === 'file') {
+							const filename = uri.fsPath;
+							const content = await vscode.workspace.fs.readFile(uri);
+							mergedContent += `## ${filename}\n\n\`\`\`\n${content}\n\`\`\`\n\n`;
+							copiedFiles.push(filename);
+						}
+					}
+					searchPrompt = `${task}\n${mergedContent}`;
+				} else {
+					searchPrompt = task;
 				}
-			  }
-			  searchPrompt = `${task}\n${mergedContent}`;
-			} else {
-			  searchPrompt = task;
-			}
-			break;
-		  default:
-			searchPrompt = task;
+				break;
+			default:
+				searchPrompt = task;
 		}
-		
-		this._askChatGPT(searchPrompt);
+	
+		// Send both the system prompt and the user's message to ChatGPT
+		const finalPrompt = `Your intstructions: ${systemPrompt} User message: ${searchPrompt}`;
+		this._askChatGPT(task, finalPrompt);
 	}
+	
 
-	private async _askChatGPT(searchPrompt: string): Promise<void> {
-		this._view?.show?.(true);
 
-		if (!this._chatGPTAPI) {
-			const errorMessage = "[ERROR] API key not set or wrong, please go to extension settings to set it (read README.md for more info).";
-			this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
-			return;
-		}
+private async _askChatGPT(task: string, searchPrompt: string): Promise<void> {
+    this._view?.show?.(true);
 
-		this._view?.webview.postMessage({ type: "setTask", value: this._task });
+    if (!this._chatGPTAPI) {
+        const errorMessage = "[ERROR] API key not set or wrong, please go to extension settings to set it (read README.md for more info).";
+        this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
+        return;
+    }
 
-		const requestMessage = {
-			type: "addRequest",
-			value: { text: searchPrompt, parentMessageId: this._conversation?.parentMessageId },
-		};
+    this._view?.webview.postMessage({ type: "setTask", value: this._task });
 
-		this._view?.webview.postMessage(requestMessage);
+    const requestMessage = {
+        type: "addRequest",
+        value: { text: task, parentMessageId: this._conversation?.parentMessageId },
+    };
 
-		this._currentMessageNumber++;
+    this._view?.webview.postMessage(requestMessage);
 
-		this._setWorkingState("asking");
+    this._currentMessageNumber++;
 
-		try {
-			const currentMessageNumber = this._currentMessageNumber;
+    this._setWorkingState("asking");
 
-			const res = await this._chatGPTAPI.sendMessage(searchPrompt, {
-				onProgress: (partialResponse) => {
-					if (partialResponse.id === partialResponse.parentMessageId || this._currentMessageNumber !== currentMessageNumber) {
-						return;
-					}
+    try {
+        const currentMessageNumber = this._currentMessageNumber;
 
-					if (this._view?.visible) {
-						const responseMessage = { type: "addResponse", value: partialResponse };
-						this._view?.webview.postMessage(responseMessage);
-					}
-				},
-				timeoutMs: (this._settings.timeoutLength || 60) * 1000,
-				abortSignal: this._abortController.signal,
-				...this._conversation,
-			});
+        const res = await this._chatGPTAPI.sendMessage(searchPrompt, {
+            onProgress: (partialResponse) => {
+                if (partialResponse.id === partialResponse.parentMessageId || this._currentMessageNumber !== currentMessageNumber) {
+                    return;
+                }
 
-			if (this._settings.keepConversation) {
-				this._conversation = {
-					conversationId: res.conversationId,
-					parentMessageId: res.id,
-				};
-				this._view?.webview?.postMessage({ type: "setConversationId", value: res.conversationId });
-			}
-		} catch (e) {
-			console.error(e);
-			const errorMessage = `[ERROR] ${e}`;
-			this._view?.show?.(true);
-			this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
-		}
+                if (this._view?.visible) {
+                    const responseMessage = { type: "addResponse", value: partialResponse };
+                    this._view?.webview.postMessage(responseMessage);
+                }
+            },
+            timeoutMs: (this._settings.timeoutLength || 60) * 1000,
+            abortSignal: this._abortController.signal,
+            ...this._conversation,
+        });
 
-		this._setWorkingState("idle");
-	}
+        if (this._settings.keepConversation) {
+            this._conversation = {
+                conversationId: res.conversationId,
+                parentMessageId: res.id,
+            };
+            this._view?.webview?.postMessage({ type: "setConversationId", value: res.conversationId });
+        }
+    } catch (e) {
+        console.error(e);
+        const errorMessage = `[ERROR] ${e}`;
+        this._view?.show?.(true);
+        this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
+    }
+
+    this._setWorkingState("idle");
+}
+
 
 	public abort(){
 		this._abortController?.abort();
