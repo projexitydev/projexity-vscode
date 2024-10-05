@@ -7,6 +7,12 @@ import * as cheerio from 'cheerio';
 import {parse} from "csv";
 import fetch from 'node-fetch';
 
+
+// Projexity Information
+let project = "AI Interviewer";
+let ticket = "Make backend prompts for interviewer better";
+let ticketRequirements = "Backend prompts are clear and consise and do the job"
+
 type OpenAIAPIInfo = {
 	// mode?: string,
 	apiKey?: string,
@@ -245,7 +251,12 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 				case 'webviewLoaded':
 					{
 						this._view?.webview.postMessage({ type: 'setWorkingState', value: this._workingState });
-
+						const requestMessage = {
+							type: "addRequest",
+							value: { text: `Hello 👋! I am Projexity AI, here to assist you. It looks like you're working on the ticket: "${ticket}" for the project "${project}". Ticket Requirements: ${ticketRequirements}. Let me know if you need any help, want to better understand something, or if you're having trouble getting started.`, parentMessageId: this._conversation?.parentMessageId },
+						};
+					
+						this._view?.webview.postMessage(requestMessage);
 						// this.loadAwesomePrompts();
 						break;
 					}
@@ -368,10 +379,6 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 		if (!this._chatGPTAPI) {
 			this._newAPI();
 		}
-
-		let project = "AI Interviewer";
-		let ticket = "Make backend prompts for interviewer better";
-		let ticketRequirements = "Backend prompts are clear and consise and do the job"
 	
 		// Define the system prompt to guide ChatGPT's behavior
 		const systemPrompt = `You are assisting a student with their project as a tutor. The project is "${project}" and the task is "${ticket}". The requirements are: "${ticketRequirements}". You must provide guidance and help the student understand the concepts without giving direct answers. Avoid giving a complete solution directly, but use helpful examples and explanations to teach the student.`;
