@@ -287,6 +287,37 @@ interface ChatEvent {
       }
     });
 
+    const ticketSelect = document.getElementById('ticket-select') as HTMLInputElement;
+    ticketSelect?.addEventListener('change', () => {
+        const selectedTicket = ticketSelect.value;
+        // Send message to the extension
+        vscode.postMessage({
+            type: 'ticketSelected',
+            value: selectedTicket
+        });
+    });
+
+    // Listen for messages from the extension
+    window.addEventListener('message', event => {
+        const message = event.data;
+        switch (message.type) {
+            case 'setTickets':
+                const tickets = message.value;
+                const ticketSelect = document.getElementById('ticket-select') as HTMLInputElement;
+                // Remove existing options
+                ticketSelect.innerHTML = '';
+                // Add options
+                tickets.forEach((ticket: string) => {
+                    const option = document.createElement('option');
+                    option.value = ticket;
+                    option.text = ticket;
+                    ticketSelect.appendChild(option);
+                });
+                break;
+            // Handle other message types if necessary
+        }
+    });
+
     $('#send-request').on('click', () => {
       sendMessage(promptInput.val() as string);
     });

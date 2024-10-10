@@ -7,11 +7,30 @@ import * as cheerio from 'cheerio';
 import {parse} from "csv";
 import fetch from 'node-fetch';
 
+interface Ticket {
+    title: string;
+    requirements: string;
+}
 
-// Projexity Information
-let project = "AI Interviewer";
-let ticket = "Make backend prompts for interviewer better";
-let ticketRequirements = "Backend prompts are clear and consise and do the job"
+interface Project {
+    name: string;
+    description: string;
+    tickets: Ticket[];
+}
+
+const projects: { [repoName: string]: Project } = {
+    "AI_Interviewer": {
+        name: "AI Interviewer",
+        description: "An AI tool for interviewing",
+        tickets: [
+            { title: "Make backend prompts for interviewer better", requirements: "Backend prompts are clear and concise and do the job" },
+			{ title: "Update UI.", requirements: "make UI look cleaner." },
+            // Add more tickets as needed
+        ],
+    },
+    // Add more projects as needed
+};
+
 
 type OpenAIAPIInfo = {
 	// mode?: string,
@@ -134,6 +153,9 @@ export function activate(context: vscode.ExtensionContext) {
 }
 
 class ChatGPTViewProvider implements vscode.WebviewViewProvider {
+	private _ticket?: string;
+private _ticketRequirements?: string;
+private _project?: Project;
 	public static readonly viewType = 'chatgpt-ai.chatView';
 	private _view?: vscode.WebviewView;
 
@@ -245,6 +267,12 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 		// set the HTML for the webview
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
+	    this._project = projects["AI_Interviewer"];
+    	const tickets = this._project.tickets.map(ticket => ticket.title);
+    	this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
+
+		
+
 		// add an event listener for messages received by the webview
 		webviewView.webview.onDidReceiveMessage(data => {
 			switch (data.type) {
@@ -253,7 +281,7 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 						this._view?.webview.postMessage({ type: 'setWorkingState', value: this._workingState });
 						const requestMessage = {
 							type: "addRequest",
-							value: { text: `Hello 👋! I am Projexity AI, here to assist you. It looks like you're working on the ticket: "${ticket}" for the project "${project}". Ticket Requirements: ${ticketRequirements}. Let me know if you need any help, want to better understand something, or if you're having trouble getting started.`, parentMessageId: this._conversation?.parentMessageId },
+							value: { text:  `Hello 👋! I am Projexity AI, here to assist you. It looks like you're working on the project "${this._project?.name}". Project Description: ${this._project?.description}. Please choose the ticket you are currently working on so I can help you if you get stuck. Available tickets: ${tickets}.`, parentMessageId: this._conversation?.parentMessageId },
 						};
 					
 						this._view?.webview.postMessage(requestMessage);
@@ -266,6 +294,17 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 						// this.loadAwesomePrompts();
 						break;
 					}
+					case 'ticketSelected':
+            {
+                const selectedTicketTitle = data.value;
+                const selectedTicket = this._project?.tickets.find(ticket => ticket.title === selectedTicketTitle);
+                if (selectedTicket) {
+					console.log(selectedTicket)
+                    this._ticket = selectedTicket.title;
+                    this._ticketRequirements = selectedTicket.requirements;
+                }
+                break;
+            }
 				case 'codeSelected': {
 					let code = data.value;
 					const editor = vscode.window.activeTextEditor;
@@ -381,8 +420,8 @@ class ChatGPTViewProvider implements vscode.WebviewViewProvider {
 		}
 	
 		// Define the system prompt to guide ChatGPT's behavior
-		const systemPrompt = `You are assisting a student with their project as a tutor. The project is "${project}" and the task is "${ticket}". The requirements are: "${ticketRequirements}". You must provide guidance and help the student understand the concepts without giving direct answers. Avoid giving a complete solution directly, but use helpful examples and explanations to teach the student.`;
-	
+		const systemPrompt = `You are assisting a student with their project as a tutor. The project is "${this._project?.name}" and the task is "${this._ticket}". The requirements are: "${this._ticketRequirements}". You must provide guidance and help the student understand the concepts without giving direct answers. Avoid giving a complete solution directly, but use helpful examples and explanations to teach the student.`;
+		console.log(systemPrompt)
 		// Don't include the system prompt in the user-facing message
 		let searchPrompt: string;
 		let languageId: string;

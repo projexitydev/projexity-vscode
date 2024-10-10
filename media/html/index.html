@@ -113,6 +113,10 @@
                     <option value="whole_file">Whole File</option>
                     <option value="all_opened_files">All Opened Files</option>
                 </select>
+                <div class="mx-1 text-stone-300 text-sm">Working on ticket</div>
+                <select id="ticket-select" class="bg-stone-700 text-sm">
+                    <!-- Options will be populated dynamically -->
+                </select>
             </div>
             <div class="stop-container flex items-center">
                 <div id="working-state" class="working-label mr-4 text-stone-300 text-xs">Projexity AI</div>
@@ -138,5 +142,38 @@
         </div>
     </div>
 </body>
+<script>
+    window.addEventListener('message', event => {
+    const message = event.data;
+    switch (message.type) {
+        case 'setTickets':
+            const tickets = message.value;
+            const ticketSelect = document.getElementById('ticket-select');
+            // Remove existing options
+            ticketSelect.innerHTML = '';
+            // Add options
+            tickets.forEach(ticket => {
+                const option = document.createElement('option');
+                option.value = ticket;
+                option.text = ticket;
+                ticketSelect.add(option);
+            });
+            break;
+        // Handle other message types
+    }
+});
+
+// Add event listener to ticket-select dropdown
+const ticketSelect = document.getElementById('ticket-select');
+ticketSelect.addEventListener('change', () => {
+    const selectedTicket = ticketSelect.value;
+    // Send message to the extension
+    vscode.postMessage({
+        type: 'ticketSelected',
+        value: selectedTicket
+    });
+});
+
+</script>
 
 </html>
