@@ -19,7 +19,7 @@ interface Project {
 }
 
 const projects: { [repoName: string]: Project } = {
-    "AI_Interviewer": {
+    "232421": {
         name: "AI Interviewer",
         description: "An AI tool for interviewing",
         tickets: [
@@ -267,9 +267,15 @@ private _project?: Project;
 		// set the HTML for the webview
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-	    this._project = projects["AI_Interviewer"];
-    	const tickets = this._project.tickets.map(ticket => ticket.title);
-    	this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
+	    const projectId: string | undefined = process.env.PROJECT_ID;
+		let tickets: any;
+		if (projectId) {
+			this._project = projects[projectId];
+			tickets = this._project.tickets.map(ticket => ticket.title);
+			this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
+		} else {
+			console.error("PROJECT_ID is not defined in the environment variables.");
+		}
 
 		
 
