@@ -333,7 +333,6 @@ private _project?: Project;
 	
 				// Construct the message to send to the AI for code validation
 				const aiPrompt = `You are helping with the project "${this._project?.name}" on the ticket "${ticket}". The ticket requirements are "${requirements}". Please review the following code. If the code meets the ticket requirments, say 'Looks good to me!'. If the code does not meet the ticket requirments, say 'Code needs more work.' and provide feedback. : \n${mergedCode}`;
-				console.log(aiPrompt)
 				// Send the prompt to ChatGPT
 				await this._askChatGPT(`Checking Code | Ticket : ${ticket} | Ticket Requirments: ${requirements}`, aiPrompt);
 				break;
