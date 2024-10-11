@@ -297,6 +297,22 @@ interface ChatEvent {
         });
     });
 
+    // Handle the 'Check Code' button click event
+    document.getElementById('check-code-button')?.addEventListener('click', async () => {
+      const ticketSelect = document.getElementById('ticket-select') as HTMLInputElement;
+      const contextSelect = document.getElementById('context-select') as HTMLInputElement;
+      const ticket = ticketSelect?.value;
+      const context = contextSelect?.value;
+
+      // Get the open file contents from VS Code tabs
+      vscode.postMessage({
+          type: 'checkCode',
+          ticket: ticket,
+          context: "all_opened_files" // whether it's all opened files, whole file, or selection
+      });
+  });
+    
+
     // Listen for messages from the extension
     window.addEventListener('message', event => {
         const message = event.data;
@@ -317,6 +333,8 @@ interface ChatEvent {
             // Handle other message types if necessary
         }
     });
+
+    
 
     $('#send-request').on('click', () => {
       sendMessage(promptInput.val() as string);

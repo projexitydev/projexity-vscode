@@ -280,7 +280,7 @@ private _project?: Project;
 		
 
 		// add an event listener for messages received by the webview
-		webviewView.webview.onDidReceiveMessage(data => {
+		webviewView.webview.onDidReceiveMessage(async data => {
 			switch (data.type) {
 				case 'webviewLoaded':
 					{
@@ -311,6 +311,33 @@ private _project?: Project;
                 }
                 break;
             }
+			case 'checkCode': {
+				const { ticket, context } = data;
+	
+				// Retrieve the ticket requirements and project details
+				const selectedTicket = this._project?.tickets.find(t => t.title === ticket);
+				const requirements = selectedTicket?.requirements;
+	
+				// Get the code from all opened files based on context
+				let mergedCode = '';
+				if (context === 'all_opened_files') {
+					const activeTabGroup = vscode.window.tabGroups.activeTabGroup;
+					const tabs = activeTabGroup.tabs;
+	
+					for (const tab of tabs) {
+						const uri = (tab.input as vscode.TabInputText).uri;
+						const content = (await vscode.workspace.fs.readFile(uri)).toString();
+						mergedCode += `## ${uri.fsPath}\n\`\`\`\n${content}\n\`\`\`\n`;
+					}
+				}
+	
+				// Construct the message to send to the AI for code validation
+				const aiPrompt = `You are helping with the project "${this._project?.name}" on the ticket "${ticket}". The ticket requirements are "${requirements}". Please review the following code. If the code meets the ticket requirments, say 'Looks good to me!'. If the code does not meet the ticket requirments, say 'Code needs more work.' and provide feedback. : \n${mergedCode}`;
+				console.log(aiPrompt)
+				// Send the prompt to ChatGPT
+				await this._askChatGPT('Check Code', aiPrompt);
+				break;
+			}
 				case 'codeSelected': {
 					let code = data.value;
 					const editor = vscode.window.activeTextEditor;
