@@ -18,18 +18,79 @@ interface Project {
     tickets: Ticket[];
 }
 
-const projects: { [repoName: string]: Project } = {
-    "232421": {
-        name: "AI Interviewer",
-        description: "An AI tool for interviewing",
-        tickets: [
-            { title: "Make backend prompts for interviewer better", requirements: "Backend prompts are clear and concise and do the job" },
-			{ title: "Update UI.", requirements: "make UI look cleaner." },
-            // Add more tickets as needed
-        ],
-    },
-    // Add more projects as needed
-};
+const projects: { [repoId: string]: Project } = {
+	"871482895": {
+	  name: "Weather App",
+	  description: "Build a fully functional weather app that allows users to search for weather information by city name.",
+	  tickets: [
+		{
+		  title: "1. Create the Main Component Structure (WeatherApp)",
+		  requirements: "Set up the core React component structure by creating a functional component named WeatherApp. This component will serve as the base for the entire weather application where other components and logic will be integrated.",
+		},
+		{
+		  title: "2. Design the User Interface with Search Bar",
+		  requirements: "Design the basic UI for the weather app by creating a search bar where users can enter the name of a city. Include a 'Get Weather' button that users will click to fetch the weather data. Make sure the layout is intuitive and visually appealing.",
+		},
+		{
+		  title: "3. Visit OpenWeatherMap API Website",
+		  requirements: "Navigate to the OpenWeatherMap website (https://openweathermap.org/) to explore their weather API options. Familiarize yourself with the different endpoints, data formats, and features that will be useful for fetching weather data.",
+		},
+		{
+		  title: "4. Create an Account on OpenWeatherMap",
+		  requirements: "Sign up for a free account on the OpenWeatherMap website to gain access to the API services. Completing this step is essential as you will need an account to generate the API key for making requests to fetch weather data.",
+		},
+		{
+		  title: "5. Read API Documentation for OpenWeatherMap",
+		  requirements: "Go through the OpenWeatherMap API documentation to understand how to make requests to the API. Take note of the parameters needed, such as city name and API key, and learn about the data format returned by the API.",
+		},
+		{
+		  title: "6. Obtain OpenWeatherMap API Key",
+		  requirements: "Generate an API key from your OpenWeatherMap account. This key is required for making requests to the API. For simplicity, hardcode the API key directly into your project to quickly get started with the data fetching process.",
+		},
+		{
+		  title: "7. Create a Function to Fetch Weather Data",
+		  requirements: "Write a function inside the WeatherApp component that makes a request to the OpenWeatherMap API using the hardcoded API key and the city name provided by the user. Ensure the function retrieves the weather data in metric units (Celsius).",
+		},
+		{
+		  title: "8. Handle User Input for City Search",
+		  requirements: "Implement the logic to capture the user's input from the search bar and store it in the component state. Make sure the input value updates dynamically as the user types and is ready to be used when making the API request.",
+		},
+		{
+		  title: "9. Implement API Error Handling for Invalid Cities",
+		  requirements: "Add error handling logic to the fetch function to manage scenarios where the user enters an invalid city name. Display a user-friendly error message on the UI, such as 'City not found', if the API request fails or returns no results.",
+		},
+		{
+		  title: "10. Add a Loading Spinner During API Requests",
+		  requirements: "Integrate a loading spinner using a library like react-loader-spinner to indicate when the weather data is being fetched. The spinner should be visible while the API request is in progress and hidden once the data is retrieved or an error occurs.",
+		},
+		{
+		  title: "11. Display Weather Data on the UI",
+		  requirements: "Design the UI to display the fetched weather data, including temperature, city name, country, weather conditions, and an icon representing the weather. Make sure the data is presented clearly and is easy to read for the user.",
+		},
+		{
+		  title: "12. Integrate Weather Icons from OpenWeatherMap",
+		  requirements: "Use the weather icon codes provided by the OpenWeatherMap API to display appropriate weather icons in the UI. This will enhance the visual appeal of the app and provide a quick visual cue about the weather conditions.",
+		},
+		{
+		  title: "13. Style the Weather App Using CSS",
+		  requirements: "Apply CSS styles to the weather app to improve its visual appeal. Focus on creating a clean, modern design that is also responsive, ensuring that the layout works well on both desktop and mobile devices.",
+		},
+		{
+		  title: "14. Optimize Error Messages and User Feedback",
+		  requirements: "Refine the error messages and user feedback mechanisms to make them more informative. Clearly guide the user to correct any issues, such as mistyped city names, and provide helpful hints for getting accurate results.",
+		},
+		{
+		  title: "15. Test Weather Data for Multiple Cities",
+		  requirements: "Perform tests by entering a variety of city names to confirm that the weather data is accurately fetched and displayed for each location. Check for both common and less-known cities to validate the app's reliability.",
+		},
+		{
+		  title: "16. Final Code Review and Clean-Up",
+		  requirements: "Conduct a thorough code review to identify any potential issues, optimize the code for performance, and remove any unnecessary or redundant lines. Ensure the app is ready for deployment with clean, maintainable code.",
+		},
+	  ],
+	},
+  };
+  
 
 
 type OpenAIAPIInfo = {
@@ -267,10 +328,10 @@ private _project?: Project;
 		// set the HTML for the webview
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-	    const projectId: string | undefined = process.env.PROJECT_ID;
+	    const repoId: string | undefined = process.env.REPO_ID;
 		let tickets: any;
-		if (projectId) {
-			this._project = projects[projectId];
+		if (repoId) {
+			this._project = projects[repoId];
 			tickets = this._project.tickets.map(ticket => ticket.title);
 			this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
 		} else {

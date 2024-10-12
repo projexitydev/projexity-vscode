@@ -17,7 +17,7 @@
 			],
 			"preLaunchTask": "${defaultBuildTask}",
 			"env": {
-        "PROJECT_ID": "232421"
+        "REPO_ID": "871482895"
       },
 		},
 		{
