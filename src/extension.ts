@@ -335,6 +335,9 @@ private _project?: Project;
 			this._project = projects[repoId];
 			tickets = this._project.tickets.map(ticket => ticket.title);
 			this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
+
+			this._ticket = this._project.tickets[0]?.title;
+			this._ticketRequirements = this._project.tickets[0]?.requirements;
 		} else {
 			console.error("PROJECT_ID is not defined in the environment variables.");
 		}
@@ -349,8 +352,18 @@ private _project?: Project;
 						this._view?.webview.postMessage({ type: 'setWorkingState', value: this._workingState });
 						const requestMessage = {
 							type: "addRequest",
-							value: { text:  `Hello 👋! I am Projexity AI, here to assist you. It looks like you're working on the project "${this._project?.name}". Project Description: ${this._project?.description}. Please choose the ticket you are currently working on so I can help you if you get stuck. Available tickets: ${tickets}.`, parentMessageId: this._conversation?.parentMessageId },
-						};
+							value: {
+							  text: `👋 Hello, I'm Projexity AI, here to assist you.													  
+												📂 **Project**: *${this._project?.name}*													  
+												📝 **Description**: ${this._project?.description}													  
+												✅ **When you're ready**: Click the "Check Code" button when you feel you're finished, and I'll let you know if you're good to move on to the next ticket!													  
+												🔍 Please choose the ticket you are currently working on at the bottom, so I can help if you get stuck!													  													  
+												🚀 Let's get started!`,
+							  parentMessageId: this._conversation?.parentMessageId
+							},
+						  };
+						  
+						  
 					
 						this._view?.webview.postMessage(requestMessage);
 						// this.loadAwesomePrompts();
