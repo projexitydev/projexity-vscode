@@ -6,6 +6,7 @@ import * as fs from 'fs';
 import * as cheerio from 'cheerio';
 import {parse} from "csv";
 import fetch from 'node-fetch';
+import axios from 'axios';
 
 interface Ticket {
     title: string;
@@ -567,33 +568,44 @@ private _project?: Project;
 	
 
 
-private async _askChatGPT(task: string, searchPrompt: string): Promise<void> {
-    this._view?.show?.(true);
+	private async _askChatGPT(task: string, searchPrompt: string): Promise<void> {
+        this._view?.show?.(true);
 
-    if (!this._chatGPTAPI) {
-        const errorMessage = "[ERROR] API key not set or wrong, please go to extension settings to set it (read README.md for more info).";
-        this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
-        return;
-    }
+        // if (!this._openaiAPIInfo?.apiKey) {
+        //     const errorMessage = "[ERROR] API key not set or wrong, please go to extension settings to set it (read README.md for more info).";
+        //     this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
+        //     return;
+        // }
 
-    this._view?.webview.postMessage({ type: "setTask", value: this._task });
+        this._view?.webview.postMessage({ type: "setTask", value: this._task });
 
-    const requestMessage = {
-        type: "addRequest",
-        value: { text: task, parentMessageId: this._conversation?.parentMessageId },
-    };
+        const requestMessage = {
+            type: "addRequest",
+            value: { text: task, parentMessageId: this._conversation?.parentMessageId },
+        };
 
-    this._view?.webview.postMessage(requestMessage);
+        this._view?.webview.postMessage(requestMessage);
 
-    this._currentMessageNumber++;
+        this._currentMessageNumber++;
 
-    this._setWorkingState("asking");
+        this._setWorkingState("asking");
 
-    try {
-        const currentMessageNumber = this._currentMessageNumber;
+        try {
+            const currentMessageNumber = this._currentMessageNumber;
 
-        const res = await this._chatGPTAPI.sendMessage(searchPrompt, {
-            onProgress: (partialResponse) => {
+            // Make a request to your backend
+            const response = await axios.post('http://localhost:5000/api/chat', {
+                prompt: searchPrompt,
+                conversationId: this._conversation?.conversationId,
+                parentMessageId: this._conversation?.parentMessageId,
+                apiBaseUrl: this._openaiAPIInfo?.apiBaseUrl,
+                model: this._openaiAPIInfo?.model
+            }, {
+                responseType: 'stream'
+            });
+
+            response.data.on('data', (chunk: Buffer) => {
+                const partialResponse = JSON.parse(chunk.toString());
                 if (partialResponse.id === partialResponse.parentMessageId || this._currentMessageNumber !== currentMessageNumber) {
                     return;
                 }
@@ -602,28 +614,33 @@ private async _askChatGPT(task: string, searchPrompt: string): Promise<void> {
                     const responseMessage = { type: "addResponse", value: partialResponse };
                     this._view?.webview.postMessage(responseMessage);
                 }
-            },
-            timeoutMs: (this._settings.timeoutLength || 60) * 1000,
-            abortSignal: this._abortController.signal,
-            ...this._conversation,
-        });
+            });
 
-        if (this._settings.keepConversation) {
-            this._conversation = {
-                conversationId: res.conversationId,
-                parentMessageId: res.id,
-            };
-            this._view?.webview?.postMessage({ type: "setConversationId", value: res.conversationId });
+            response.data.on('end', () => {
+                if (this._settings.keepConversation) {
+                    this._conversation = {
+                        conversationId: response.data.conversationId,
+                        parentMessageId: response.data.id,
+                    };
+                    this._view?.webview?.postMessage({ type: "setConversationId", value: response.data.conversationId });
+                }
+                this._setWorkingState("idle");
+            });
+
+        } catch (e: any) {
+            console.error(e);
+            let errorMessage = `[ERROR] ${e}`;
+
+			if (e?.response?.status === 429) {
+				errorMessage = "You've reached your limit of 50 messages. Please wait 24 hours before trying again.";
+			}
+
+
+            this._view?.show?.(true);
+            this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
+            this._setWorkingState("idle");
         }
-    } catch (e) {
-        console.error(e);
-        const errorMessage = `[ERROR] ${e}`;
-        this._view?.show?.(true);
-        this._view?.webview.postMessage({ type: "addEvent", value: { text: errorMessage } });
     }
-
-    this._setWorkingState("idle");
-}
 
 
 	public abort(){
