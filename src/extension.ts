@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { ChatGPTAPI, ChatGPTUnofficialProxyAPI } from 'chatgpt';
-
+import { createParser } from 'eventsource-parser';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as cheerio from 'cheerio';
@@ -607,27 +607,57 @@ private _project?: Project;
             const currentMessageNumber = this._currentMessageNumber;
 
             // Make a request to your backend
-            const response = await axios.post('http://localhost:5000/api/chat', {
+            const response = await axios.post('http://projexity.us-east-2.elasticbeanstalk.com/api/chat', {
                 prompt: searchPrompt,
                 conversationId: this._conversation?.conversationId,
                 parentMessageId: this._conversation?.parentMessageId,
                 apiBaseUrl: this._openaiAPIInfo?.apiBaseUrl,
                 model: this._openaiAPIInfo?.model
             }, {
-                responseType: 'stream'
-            });
+                responseType: 'stream',
+            },
+		);
+		let buffer = '';
+const parser = createParser((event) => {
+  if (event.type === 'event') {
+    const partialResponse = JSON.parse(event.data);
+    console.log("Parsed response:", partialResponse);
+    
+    // Handle the parsed response
+    if (this._view) {
+      const responseMessage = { type: "addResponse", value: partialResponse };
+      this._view?.webview.postMessage(responseMessage);
+    }
+  }
+});
 
-            response.data.on('data', (chunk: Buffer) => {
-                const partialResponse = JSON.parse(chunk.toString());
-                if (partialResponse.id === partialResponse.parentMessageId || this._currentMessageNumber !== currentMessageNumber) {
-                    return;
-                }
+response.data.on('data', (chunk: Buffer) => {
+	console.log("Chunk received: ", chunk.toString());
+    try {
+        const partialResponse = JSON.parse(chunk.toString());
+        console.log("Parsed chunk:", partialResponse);
+        
+        // Handle the parsed response here...
+        if (partialResponse.id === partialResponse.parentMessageId || this._currentMessageNumber !== currentMessageNumber) {
+            return;
+        }
 
-                if (this._view?.visible) {
-                    const responseMessage = { type: "addResponse", value: partialResponse };
-                    this._view?.webview.postMessage(responseMessage);
-                }
-            });
+        if (this._view) {
+            const responseMessage = { type: "addResponse", value: partialResponse };
+            console.log("Sending message to frontend:", responseMessage);
+            this._view?.webview.postMessage(responseMessage);
+        } else {
+            console.log("View is not visible or webview is not available.");
+        }
+    } catch (error) {
+        // Handle JSON parse errors without breaking the flow
+        if (!(error instanceof SyntaxError)) {
+            console.error("Error processing chunk:", error);
+        }
+        // If it's a syntax error, likely the JSON is incomplete, so we keep accumulating
+    }
+});
+
 
             response.data.on('end', () => {
                 if (this._settings.keepConversation) {
