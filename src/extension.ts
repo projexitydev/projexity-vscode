@@ -22,71 +22,103 @@ interface Project {
 const projects: { [repoId: string]: Project } = {
 	"871482895": {
 	  name: "Weather App",
-	  description: "Build a fully functional weather app that allows users to search for weather information by city name.",
+	  description:
+		"Build a fully functional weather app that allows users to search for weather information by city name.",
 	  tickets: [
 		{
 		  title: "1. Create the Main Component Structure (WeatherApp)",
-		  requirements: "Set up the core React component structure by creating a functional component named WeatherApp. This component will serve as the base for the entire weather application where other components and logic will be integrated.",
+		  requirements:
+			"Create a new functional React component named WeatherApp.jsx. This component will be the foundation of your weather app. Inside the 'src' folder, create a folder named 'components', and inside it, add the WeatherApp.jsx file. Ensure the component is functional and export it so it can be used in other parts of the application.",
 		},
 		{
-		  title: "2. Design the User Interface with Search Bar",
-		  requirements: "Design the basic UI for the weather app by creating a search bar where users can enter the name of a city. Include a 'Get Weather' button that users will click to fetch the weather data. Make sure the layout is intuitive and visually appealing.",
+		  title: "2. Initialize Git Repository and First Commit",
+		  requirements:
+			"Initialize a new Git repository in your project folder. Run the 'git init' command to start tracking changes in your project. After setting up the basic structure of the WeatherApp component and CSS file, stage your changes with 'git add .' and commit them with 'git commit -m \"Initial commit: Set up basic component structure\"'.",
 		},
 		{
-		  title: "3. Visit OpenWeatherMap API Website",
-		  requirements: "Navigate to the OpenWeatherMap website (https://openweathermap.org/) to explore their weather API options. Familiarize yourself with the different endpoints, data formats, and features that will be useful for fetching weather data.",
+		  title: "3. Design the User Interface with Search Bar",
+		  requirements:
+			"In the WeatherApp component, create a basic UI layout. Add an input field for users to type a city name and a 'Get Weather' button. You'll also need a .css file to style this UI. Inside the 'components' folder, create a 'WeatherApp.css' file, import it into WeatherApp.jsx, and use it to style the input field and button.",
 		},
 		{
-		  title: "4. Create an Account on OpenWeatherMap",
-		  requirements: "Sign up for a free account on the OpenWeatherMap website to gain access to the API services. Completing this step is essential as you will need an account to generate the API key for making requests to fetch weather data.",
+		  title: "4. Visit OpenWeatherMap API Website",
+		  requirements:
+			"Go to the OpenWeatherMap website (https://openweathermap.org/) and explore the different API options available. Familiarize yourself with the API's features, including the current weather, forecast, and weather conditions. This information will help in understanding the data you'll fetch for the app.",
 		},
 		{
-		  title: "5. Read API Documentation for OpenWeatherMap",
-		  requirements: "Go through the OpenWeatherMap API documentation to understand how to make requests to the API. Take note of the parameters needed, such as city name and API key, and learn about the data format returned by the API.",
+		  title: "5. Create an Account on OpenWeatherMap",
+		  requirements:
+			"Sign up for a free account on OpenWeatherMap to gain access to the API. You will need to create an account to generate an API key. This key will be used in the next steps to authenticate your requests when fetching weather data for your app.",
 		},
 		{
-		  title: "6. Obtain OpenWeatherMap API Key",
-		  requirements: "Generate an API key from your OpenWeatherMap account. This key is required for making requests to the API. For simplicity, hardcode the API key directly into your project to quickly get started with the data fetching process.",
+		  title: "6. Read API Documentation for OpenWeatherMap",
+		  requirements:
+			"Read through the OpenWeatherMap API documentation to learn how to make requests. Pay attention to the base URL, required parameters (such as city name and API key), and available endpoints. This step will help you understand how to structure the API requests in your app.",
 		},
 		{
-		  title: "7. Create a Function to Fetch Weather Data",
-		  requirements: "Write a function inside the WeatherApp component that makes a request to the OpenWeatherMap API using the hardcoded API key and the city name provided by the user. Ensure the function retrieves the weather data in metric units (Celsius).",
+		  title: "7. Obtain OpenWeatherMap API Key",
+		  requirements:
+			"After creating an OpenWeatherMap account, generate an API key. This key is required for making API requests. Hardcode the API key directly into your WeatherApp.jsx file for now, but be mindful that in a production environment, sensitive information like API keys should be handled securely.",
 		},
 		{
-		  title: "8. Handle User Input for City Search",
-		  requirements: "Implement the logic to capture the user's input from the search bar and store it in the component state. Make sure the input value updates dynamically as the user types and is ready to be used when making the API request.",
+		  title: "8. Commit API Integration Changes",
+		  requirements:
+			"After implementing the API fetch function and ensuring it retrieves weather data correctly, stage your changes using 'git add .' and commit them with 'git commit -m \"Implemented API fetch for weather data\"'.",
 		},
 		{
-		  title: "9. Implement API Error Handling for Invalid Cities",
-		  requirements: "Add error handling logic to the fetch function to manage scenarios where the user enters an invalid city name. Display a user-friendly error message on the UI, such as 'City not found', if the API request fails or returns no results.",
+		  title: "9. Handle User Input for City Search",
+		  requirements:
+			"Inside the WeatherApp component, capture the user’s input from the search bar and store it in the component’s state using the useState hook. Ensure the input value updates dynamically as the user types, and make it accessible when the 'Get Weather' button is clicked to fetch data.",
 		},
 		{
-		  title: "10. Add a Loading Spinner During API Requests",
-		  requirements: "Integrate a loading spinner using a library like react-loader-spinner to indicate when the weather data is being fetched. The spinner should be visible while the API request is in progress and hidden once the data is retrieved or an error occurs.",
+		  title: "10. Commit User Input Handling Logic",
+		  requirements:
+			"Once you've successfully captured the user input from the search bar and stored it in the component's state, commit these changes using 'git add .' and 'git commit -m \"Added input handling for city search\"'.",
 		},
 		{
-		  title: "11. Display Weather Data on the UI",
-		  requirements: "Design the UI to display the fetched weather data, including temperature, city name, country, weather conditions, and an icon representing the weather. Make sure the data is presented clearly and is easy to read for the user.",
+		  title: "11. Implement API Error Handling for Invalid Cities",
+		  requirements:
+			"Add error handling in the fetch function to manage cases where the user inputs an invalid city name or if the API fails. Display a clear error message on the UI, such as 'City not found'. You can conditionally render this message below the search bar.",
 		},
 		{
-		  title: "12. Integrate Weather Icons from OpenWeatherMap",
-		  requirements: "Use the weather icon codes provided by the OpenWeatherMap API to display appropriate weather icons in the UI. This will enhance the visual appeal of the app and provide a quick visual cue about the weather conditions.",
+		  title: "12. Add a Loading Spinner During API Requests",
+		  requirements:
+			"Add a loading state to your component using the useState hook. Include a spinner from a library like react-loader-spinner, and display it while the API request is being processed. Ensure the spinner disappears when the data is successfully retrieved or an error occurs.",
 		},
 		{
-		  title: "13. Style the Weather App Using CSS",
-		  requirements: "Apply CSS styles to the weather app to improve its visual appeal. Focus on creating a clean, modern design that is also responsive, ensuring that the layout works well on both desktop and mobile devices.",
+		  title: "13. Display Weather Data on the UI",
+		  requirements:
+			"Once the weather data is successfully fetched, render it on the UI. Display key information such as the temperature, city name, country, weather conditions, and date. Ensure the data is clearly presented and formatted to be user-friendly.",
 		},
 		{
-		  title: "14. Optimize Error Messages and User Feedback",
-		  requirements: "Refine the error messages and user feedback mechanisms to make them more informative. Clearly guide the user to correct any issues, such as mistyped city names, and provide helpful hints for getting accurate results.",
+		  title: "14. Integrate Weather Icons from OpenWeatherMap",
+		  requirements:
+			"Use the weather icon code from the OpenWeatherMap API response to display relevant icons on the UI. Use the img element in your JSX and dynamically set the source URL using the icon code provided by the API.",
 		},
 		{
-		  title: "15. Test Weather Data for Multiple Cities",
-		  requirements: "Perform tests by entering a variety of city names to confirm that the weather data is accurately fetched and displayed for each location. Check for both common and less-known cities to validate the app's reliability.",
+		  title: "15. Style the Weather App Using CSS",
+		  requirements:
+			"Use your WeatherApp.css file to style the entire weather app, making it visually appealing. Focus on creating a responsive design that works well on both desktop and mobile devices. Use media queries to adjust the layout for different screen sizes.",
 		},
 		{
-		  title: "16. Final Code Review and Clean-Up",
-		  requirements: "Conduct a thorough code review to identify any potential issues, optimize the code for performance, and remove any unnecessary or redundant lines. Ensure the app is ready for deployment with clean, maintainable code.",
+		  title: "16. Optimize Error Messages and User Feedback",
+		  requirements:
+			"Enhance the error handling by refining the error messages. Make sure they are informative and clearly guide users when a city is mistyped or when there are connection issues. Use styled components or CSS to ensure the error messages are visually distinct from the rest of the app.",
+		},
+		{
+		  title: "17. Commit Error Handling and UI Feedback",
+		  requirements:
+			"After adding error handling for invalid cities and displaying error messages on the UI, stage and commit the changes with 'git add .' and 'git commit -m \"Added error handling for invalid city names\"'.",
+		},
+		{
+		  title: "18. Test Weather Data for Multiple Cities",
+		  requirements:
+			"Test the weather app by entering several different city names. Check if the correct weather data is retrieved for each city, including both well-known cities and smaller locations. Document any issues and make adjustments as necessary.",
+		},
+		{
+		  title: "19. Final Code Review, Clean-Up, and Commit",
+		  requirements:
+			"Review the entire codebase to optimize performance and clean up any redundant code. Make sure all the necessary comments are added for maintainability. Stage and commit the final changes using 'git add .' and 'git commit -m \"Final commit: Code clean-up and performance optimization\"'. This is the final step before considering the app ready for deployment.",
 		},
 	  ],
 	},
