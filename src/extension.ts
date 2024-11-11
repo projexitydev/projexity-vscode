@@ -146,6 +146,11 @@ type WorkingState = 'idle' | 'asking';
 export function activate(context: vscode.ExtensionContext) {
 
 	console.log('activating extension "chatgpt"');
+	vscode.commands.executeCommand('chatgpt-ai.chatView.focus')
+    .then(
+      () => console.log("Chat view focused successfully!"),
+      (error) => console.error("Failed to focus chat view:", error)
+    );
 	// Get the settings from the extension's configuration
 	const config = vscode.workspace.getConfiguration('chatgpt-ai');
 
@@ -584,34 +589,50 @@ private _project?: Project;
 				searchPrompt = `${task}\n${"```"}${languageId}\n${fileContent}\n${"```"}\n`;
 				break;
 				case 'all_opened_files':
-					const tabGroups = vscode.window.tabGroups.all;
-					let mergedContent = '';
-					const copiedFiles: string[] = [];
-		
-					for (const group of tabGroups) {
-						for (const tab of group.tabs) {
-							if (tab.input instanceof vscode.TabInputText) {
-								const uri = tab.input.uri;
-								if (uri && uri.scheme === 'file') {
-									const filename = uri.fsPath;
-									const contentBytes = await vscode.workspace.fs.readFile(uri);
-									const content = Buffer.from(contentBytes).toString('utf8');
-									mergedContent += `## ${filename}\n\n\`\`\`\n${content}\n\`\`\`\n\n`;
-									copiedFiles.push(filename);
-								}
-							}
-						}
-					}
-					if (mergedContent.length === 0) {
-						vscode.window.showInformationMessage('No valid text files are open to check.');
-						searchPrompt = task;
-					}					
-					if (mergedContent.length > 0) {
-						searchPrompt = `${task}\n${mergedContent}`;
-					} else {
-						searchPrompt = task;
-					}
-					break;
+    const tabGroups = vscode.window.tabGroups.all;
+    let mergedContent = '';
+    const copiedFiles: string[] = [];
+
+    for (const group of tabGroups) {
+        for (const tab of group.tabs) {
+            const input: any = tab.input;
+
+            // Ensure that input is defined
+            if (!input) {
+                console.log('Tab input is undefined for tab:', tab);
+                continue;
+            }
+
+            // Use the 'kind' property to determine the type
+            if (input.kind === 'text') {
+                const textInput = input as vscode.TabInputText;
+                const uri = textInput.uri;
+                if (uri && uri.scheme === 'file') {
+                    try {
+                        const filename = uri.fsPath;
+                        const contentBytes = await vscode.workspace.fs.readFile(uri);
+                        const content = Buffer.from(contentBytes).toString('utf8');
+                        mergedContent += `## ${filename}\n\n\`\`\`\n${content}\n\`\`\`\n\n`;
+                        copiedFiles.push(filename);
+                    } catch (error) {
+                        console.error('Error reading file:', uri.fsPath, error);
+                    }
+                } else {
+                    console.log('URI is undefined or not a file:', uri);
+                }
+            } else {
+                console.log('Unsupported tab input kind:', input.kind);
+            }
+        }
+    }
+
+    if (mergedContent.length > 0) {
+        searchPrompt = `${task}\n${mergedContent}`;
+    } else {
+        searchPrompt = task;
+    }
+    break;
+
 				default:
 					searchPrompt = task;
 			}
