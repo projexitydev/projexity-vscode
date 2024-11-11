@@ -2,7 +2,7 @@
   "name": "projexity-ai",
   "displayName": "Projexity AI",
   "description": "Projexity AI helps you complete CS personal projects.",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "publisher": "AvinashMaheshwari",
   "icon": "resources/projexity-logo.png",
   "license": "MIT",
