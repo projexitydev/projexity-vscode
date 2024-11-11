@@ -304,6 +304,8 @@ interface ChatEvent {
       const ticket = ticketSelect?.value;
       const context = contextSelect?.value;
 
+      console.log('Check Code button clicked');
+
       // Get the open file contents from VS Code tabs
       vscode.postMessage({
           type: 'checkCode',

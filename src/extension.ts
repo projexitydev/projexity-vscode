@@ -361,15 +361,18 @@ private _project?: Project;
 		// set the HTML for the webview
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-	    const repoId: string | undefined = process.env.REPO_ID;
+	    const repoId: string = process.env.REPO_ID ?? '871482895';
 		let tickets: any;
 		if (repoId) {
 			this._project = projects[repoId];
-			tickets = this._project.tickets.map(ticket => ticket.title);
-			this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
-
-			this._ticket = this._project.tickets[0]?.title;
-			this._ticketRequirements = this._project.tickets[0]?.requirements;
+			if (this._project) {
+				tickets = this._project.tickets.map(ticket => ticket.title);
+				this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
+				this._ticket = this._project.tickets[0]?.title;
+				this._ticketRequirements = this._project.tickets[0]?.requirements;
+			  } else {
+				console.error("Project not found for repoId:", repoId);
+			  }
 		} else {
 			console.error("PROJECT_ID is not defined in the environment variables.");
 		}
