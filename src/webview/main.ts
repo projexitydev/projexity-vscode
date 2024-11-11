@@ -92,7 +92,7 @@ interface ChatEvent {
       updatedResponseDiv = responsesDiv.children().last() as JQuery<HTMLElement>;
     } else {
       // Create a new div and append it to the "response" div
-      const newDiv = $('<div>').addClass('response m-1 p-1 bg-slate-800');
+      const newDiv = $('<div>').addClass('response m-1 p-1');
       responsesDiv.append(newDiv);
       updatedResponseDiv = newDiv;
     }
