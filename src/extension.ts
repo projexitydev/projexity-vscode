@@ -583,31 +583,38 @@ private _project?: Project;
 				const fileContent = activeDoc ? activeDoc.getText() : "";
 				searchPrompt = `${task}\n${"```"}${languageId}\n${fileContent}\n${"```"}\n`;
 				break;
-			case 'all_opened_files':
-				const activeTabGroup = vscode.window.tabGroups.activeTabGroup;
-				const tabs = activeTabGroup.tabs;
-	
-				if (tabs.length > 0) {
+				case 'all_opened_files':
+					const tabGroups = vscode.window.tabGroups.all;
 					let mergedContent = '';
 					const copiedFiles: string[] = [];
-	
-					for (const tab of tabs) {
-						const uri = (tab.input as vscode.TabInputText).uri;
-						if (uri && uri.scheme === 'file') {
-							const filename = uri.fsPath;
-							const content = await vscode.workspace.fs.readFile(uri);
-							mergedContent += `## ${filename}\n\n\`\`\`\n${content}\n\`\`\`\n\n`;
-							copiedFiles.push(filename);
+		
+					for (const group of tabGroups) {
+						for (const tab of group.tabs) {
+							if (tab.input instanceof vscode.TabInputText) {
+								const uri = tab.input.uri;
+								if (uri && uri.scheme === 'file') {
+									const filename = uri.fsPath;
+									const contentBytes = await vscode.workspace.fs.readFile(uri);
+									const content = Buffer.from(contentBytes).toString('utf8');
+									mergedContent += `## ${filename}\n\n\`\`\`\n${content}\n\`\`\`\n\n`;
+									copiedFiles.push(filename);
+								}
+							}
 						}
 					}
-					searchPrompt = `${task}\n${mergedContent}`;
-				} else {
+					if (mergedContent.length === 0) {
+						vscode.window.showInformationMessage('No valid text files are open to check.');
+						searchPrompt = task;
+					}					
+					if (mergedContent.length > 0) {
+						searchPrompt = `${task}\n${mergedContent}`;
+					} else {
+						searchPrompt = task;
+					}
+					break;
+				default:
 					searchPrompt = task;
-				}
-				break;
-			default:
-				searchPrompt = task;
-		}
+			}
 	
 		// Send both the system prompt and the user's message to ChatGPT
 		const finalPrompt = `Your intstructions: ${systemPrompt} User message: ${searchPrompt}`;
