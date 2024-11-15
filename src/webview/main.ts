@@ -315,26 +315,26 @@ interface ChatEvent {
   });
     
 
-    // Listen for messages from the extension
-    window.addEventListener('message', event => {
-        const message = event.data;
-        switch (message.type) {
-            case 'setTickets':
-                const tickets = message.value;
-                const ticketSelect = document.getElementById('ticket-select') as HTMLInputElement;
-                // Remove existing options
-                ticketSelect.innerHTML = '';
-                // Add options
-                tickets.forEach((ticket: string) => {
-                    const option = document.createElement('option');
-                    option.value = ticket;
-                    option.text = ticket;
-                    ticketSelect.appendChild(option);
-                });
-                break;
-            // Handle other message types if necessary
-        }
-    });
+    // COMMENT THIS BACK OUT WHEN WE ADD MULTIPLE PROJECTS
+    // window.addEventListener('message', event => {
+    //     const message = event.data;
+    //     switch (message.type) {
+    //         case 'setTickets':
+    //             const tickets = message.value;
+    //             const ticketSelect = document.getElementById('ticket-select') as HTMLInputElement;
+    //             // Remove existing options
+    //             ticketSelect.innerHTML = '';
+    //             // Add options
+    //             tickets.forEach((ticket: string) => {
+    //                 const option = document.createElement('option');
+    //                 option.value = ticket;
+    //                 option.text = ticket;
+    //                 ticketSelect.appendChild(option);
+    //             });
+    //             break;
+    //         // Handle other message types if necessary
+    //     }
+    // });
 
     
 
