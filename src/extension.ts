@@ -595,19 +595,10 @@ private _project?: Project;
 
     for (const group of tabGroups) {
         for (const tab of group.tabs) {
-            const input: any = tab.input;
-
-            // Ensure that input is defined
-            if (!input) {
-                console.log('Tab input is undefined for tab:', tab);
-                continue;
-            }
-
-            // Use the 'kind' property to determine the type
-            if (input.kind === 'text') {
-                const textInput = input as vscode.TabInputText;
-                const uri = textInput.uri;
-                if (uri && uri.scheme === 'file') {
+            const input = tab.input;
+            if (input instanceof vscode.TabInputText && input.uri) {
+                const uri = input.uri;
+                if (uri.scheme === 'file') {
                     try {
                         const filename = uri.fsPath;
                         const contentBytes = await vscode.workspace.fs.readFile(uri);
@@ -617,19 +608,16 @@ private _project?: Project;
                     } catch (error) {
                         console.error('Error reading file:', uri.fsPath, error);
                     }
-                } else {
-                    console.log('URI is undefined or not a file:', uri);
                 }
-            } else {
-                console.log('Unsupported tab input kind:', input.kind);
             }
         }
     }
 
-    if (mergedContent.length > 0) {
-        searchPrompt = `${task}\n${mergedContent}`;
-    } else {
+    if (copiedFiles.length === 0) {
+        vscode.window.showInformationMessage('No valid text files are open to check.');
         searchPrompt = task;
+    } else {
+        searchPrompt = `${task}\n${mergedContent}`;
     }
     break;
 
