@@ -20,109 +20,112 @@ interface Project {
 }
 
 const projects: { [repoId: string]: Project } = {
+	"889268940": {
+	  name: "Wordle Clone",
+	  description:
+		"Build a web-based Wordle clone using Flask, allowing users to guess a 5-letter word within 6 attempts.",
+	  tickets: [
+		{
+		  title: "1. Create Basic HTML Structure",
+		  requirements:
+			"In 'index.html', create the basic layout for the Wordle game. Include a grid div with 6 row divs (for attempts), each containing 5 letter slot divs. Add an input field and a 'Submit' button for user guesses. Note: The layout will look unstyled at this stage - styling will be added in the next ticket.",
+		},
+		{
+		  title: "2. Style the Game Grid",
+		  requirements:
+			"In 'static/main.css', add styles for the game grid. Style the grid container, row divs, and letter slots. Each letter slot should be a square box with borders. Use CSS Grid or Flexbox to ensure proper alignment and spacing of the game elements.",
+		},
+		{
+		  title: "3. Implement Random Word API Integration",
+		  requirements:
+			"Integrate the Random Word API (https://random-word-api.herokuapp.com/word?length=5) to fetch a random 5-letter word when a new game starts. Implement the fetch logic using the 'requests' library and handle any potential exceptions or errors during the API call.",
+		},
+		{
+		  title: "4. Handle User Input and Guess Validation",
+		  requirements:
+			"In your Flask app, handle form submissions from the 'Submit' button. Validate that the user's guess is a 5-letter word. Provide appropriate feedback if the word is invalid or not a real word.",
+		},
+		{
+		  title: "5. Implement Feedback on Guesses",
+		  requirements:
+			"For each valid guess, compare it to the secret word fetched from the API and provide feedback. Display colored tiles to indicate correct letters in the correct place (green), correct letters in the wrong place (yellow), and incorrect letters (gray).",
+		},
+		{
+		  title: "6. Update the UI and Style Guess Display",
+		  requirements:
+			"Update 'index.html' to display the user's guesses and the corresponding feedback. Style the game grid and tiles in 'static/main.css' to match the Wordle aesthetic, including proper colors for feedback (green, yellow, gray). Ensure that previous guesses remain visible and that the grid updates correctly.",
+		},
+		{
+		  title: "7. Handle Game Win/Loss Conditions",
+		  requirements:
+			"Implement logic to detect when the user has guessed the correct word or used all their attempts. Display appropriate messages for winning or losing the game.",
+		},
+		{
+		  title: "8. Implement Keyboard Support and Virtual Keyboard",
+		  requirements:
+			"Add keyboard input functionality: 1) Capture physical keyboard events to handle letter input and backspace, 2) Create an on-screen virtual keyboard that can be clicked and displays letter status (green, yellow, gray) based on guesses. Ensure both input methods work together seamlessly.",
+		},
+		{
+		  title: "9. Test the Game Thoroughly",
+		  requirements:
+			"Play the game multiple times to ensure all features work correctly. Test for edge cases, such as duplicate letters, and ensure the feedback is accurate.",
+		},
+		{
+		  title: "10. Final Code Review and Clean-Up",
+		  requirements:
+			"Review your code for any improvements. Remove unnecessary code, optimize functions, and add comments where needed. Ensure code readability and maintainability.",
+		},
+	  ],
+	},
 	"871482895": {
 	  name: "Weather App",
 	  description:
 		"Build a fully functional weather app that allows users to search for weather information by city name.",
 	  tickets: [
 		{
-		  title: "1. Create the Main Component Structure (WeatherApp)",
+		  title: "1. Set up the Project",
 		  requirements:
-			"Create a new functional React component named WeatherApp.jsx. This component will be the foundation of your weather app. Inside the 'src' folder, create a folder named 'components', and inside it, add the WeatherApp.jsx file. Ensure the component is functional and export it so it can be used in other parts of the application.",
+			"Let’s start simple. We’ve gone ahead and set up a new React project for you already in the codespace. In your src folder, make a new folder named components. Inside it, create a file called WeatherApp.jsx. Now, in WeatherApp.jsx, set up a basic functional React component. It doesn’t need to do much yet—just return a <h1> tag with the title of your app, like “Weather App”. Be sure to export this component at the bottom by using ‘export default WeatherApp;‘. This will ensure you’ll be able to use it elsewhere. Go to App.jsx and import your WeatherApp component. Replace the default JSX there with your new component so it renders when you start the app. Run your app to make sure you can see the title on the browser. Commit message: “Initial commit: Set up basic component structure.”",
 		},
 		{
-		  title: "2. Initialize Git Repository and First Commit",
+		  title: "2. Design the User Interface",
 		  requirements:
-			"Initialize a new Git repository in your project folder. Run the 'git init' command to start tracking changes in your project. After setting up the basic structure of the WeatherApp component and CSS file, stage your changes with 'git add .' and commit them with 'git commit -m \"Initial commit: Set up basic component structure\"'.",
+			"Time to make things look nice! In WeatherApp.jsx, add buttons for a few cities like New York, Los Angeles, and Washington, D.C. These buttons will directly fetch weather data using hardcoded coordinates later. Next, let’s add some basic styling. In your components folder, create a new file called WeatherApp.css. Style the buttons and layout to make everything clean and easy to use. Don’t forget to import the CSS file into WeatherApp.jsx at the top using import './WeatherApp.css';. Check your work by running the app and making sure the buttons are visible and clickable. Commit message: “Designed basic UI with button styling.”",
 		},
 		{
-		  title: "3. Design the User Interface with Search Bar",
+		  title: "3. Fetch Weather Data from API",
 		  requirements:
-			"In the WeatherApp component, create a basic UI layout. Add an input field for users to type a city name and a 'Get Weather' button. You'll also need a .css file to style this UI. Inside the 'components' folder, create a 'WeatherApp.css' file, import it into WeatherApp.jsx, and use it to style the input field and button.",
+			"Here comes the exciting part! We’re going to fetch real weather data using the National Weather Service (NWS) API. Each button will trigger a fetch call using hardcoded coordinates for its respective city. Start by using the /points endpoint with coordinates for one city (e.g., Washington, D.C., 38.8894,-77.0352). Write a function that fetches data from this endpoint when the button is clicked. Use fetch() to make the API request and console.log to check the response. Repeat this process for all your city buttons by assigning each button its own set of hardcoded coordinates. Test your app by clicking the buttons and checking the console for the fetched data. Commit message: “Integrated API and logged weather data.”",
 		},
 		{
-		  title: "4. Visit OpenWeatherMap API Website",
+		  title: "4. Display Weather Data",
 		  requirements:
-			"Go to the OpenWeatherMap website (https://openweathermap.org/) and explore the different API options available. Familiarize yourself with the API's features, including the current weather, forecast, and weather conditions. This information will help in understanding the data you'll fetch for the app.",
+			"Now that we have the weather data, let’s display it! Parse the response and show details like the city name, temperature, and a brief forecast. Use useState to store the fetched data so it can update dynamically when a button is clicked. Organize the displayed data in a visually appealing layout. For example, show the temperature in large text with conditions below it (e.g., 'Sunny, 75°F'). Use conditional rendering to only show the weather information after data is successfully fetched. If you’re not sure how, you can set an initial state (e.g., null) and check whether the data exists before rendering it. Commit message: “Displayed fetched weather data on the UI.”",
 		},
 		{
-		  title: "5. Create an Account on OpenWeatherMap",
+		  title: "5. Handle Errors Gracefully",
 		  requirements:
-			"Sign up for a free account on OpenWeatherMap to gain access to the API. You will need to create an account to generate an API key. This key will be used in the next steps to authenticate your requests when fetching weather data for your app.",
+			"Sometimes things don’t go as planned. Let’s prepare for that. Add error handling to your fetch function so it catches network errors or invalid API responses. If there’s an error, display a friendly message like, 'Oops! Unable to fetch weather data.' You can track errors with a simple boolean or a message in the state. Use conditional rendering to only show the error message when it’s needed. Test your app by simulating an error (e.g., turn off your internet) to ensure the error message works as expected. Commit message: “Implemented error handling for API requests.”",
 		},
 		{
-		  title: "6. Read API Documentation for OpenWeatherMap",
+		  title: "6. Finalize and Test the App",
 		  requirements:
-			"Read through the OpenWeatherMap API documentation to learn how to make requests. Pay attention to the base URL, required parameters (such as city name and API key), and available endpoints. This step will help you understand how to structure the API requests in your app.",
+			"Now let’s focus on making sure your app works seamlessly. Test it thoroughly by: Clicking each city button and verifying that the correct weather data appears. Simulating edge cases, like clicking multiple buttons quickly or triggering an error. Checking the error handling works as expected. Take some time to clean up your code. Remove unnecessary console logs, add comments to explain tricky parts, and ensure everything is easy to read. You can also add a loading spinner or placeholder text while the data is being fetched to improve the user experience. Commit message: “Finalized app with testing and code cleanup.”",
 		},
 		{
-		  title: "7. Obtain OpenWeatherMap API Key",
+		  title: "7. Enhance Interactivity and Code Organization",
 		  requirements:
-			"After creating an OpenWeatherMap account, generate an API key. This key is required for making API requests. Hardcode the API key directly into your WeatherApp.jsx file for now, but be mindful that in a production environment, sensitive information like API keys should be handled securely.",
+			"Your app works perfectly—great job! Now let’s polish it up. Refactor your WeatherApp component by breaking it into smaller components, such as: A CityButton component for rendering individual city buttons dynamically. A WeatherDetails component to display fetched weather data cleanly. Use an array of city data (e.g., names and coordinates) and the map function to dynamically render your buttons. This makes your app more maintainable and scales easily if you want to add more cities later. Tip: Consolidating your logic for fetching weather data into a single function that takes coordinates as an argument can make your code cleaner and reusable. If you’re feeling ambitious, experiment with additional styling (e.g., CSS modules, animations) or functionality (e.g., saving favorite cities in local storage). Commit message: “Refactored code into components and added dynamic rendering.”",
 		},
 		{
-		  title: "8. Commit API Integration Changes",
+		  title: "8. Optional Stretch Goals",
 		  requirements:
-			"After implementing the API fetch function and ensuring it retrieves weather data correctly, stage your changes using 'git add .' and commit them with 'git commit -m \"Implemented API fetch for weather data\"'.",
-		},
-		{
-		  title: "9. Handle User Input for City Search",
-		  requirements:
-			"Inside the WeatherApp component, capture the user’s input from the search bar and store it in the component’s state using the useState hook. Ensure the input value updates dynamically as the user types, and make it accessible when the 'Get Weather' button is clicked to fetch data.",
-		},
-		{
-		  title: "10. Commit User Input Handling Logic",
-		  requirements:
-			"Once you've successfully captured the user input from the search bar and stored it in the component's state, commit these changes using 'git add .' and 'git commit -m \"Added input handling for city search\"'.",
-		},
-		{
-		  title: "11. Implement API Error Handling for Invalid Cities",
-		  requirements:
-			"Add error handling in the fetch function to manage cases where the user inputs an invalid city name or if the API fails. Display a clear error message on the UI, such as 'City not found'. You can conditionally render this message below the search bar.",
-		},
-		{
-		  title: "12. Add a Loading Spinner During API Requests",
-		  requirements:
-			"Add a loading state to your component using the useState hook. Include a spinner from a library like react-loader-spinner, and display it while the API request is being processed. Ensure the spinner disappears when the data is successfully retrieved or an error occurs.",
-		},
-		{
-		  title: "13. Display Weather Data on the UI",
-		  requirements:
-			"Once the weather data is successfully fetched, render it on the UI. Display key information such as the temperature, city name, country, weather conditions, and date. Ensure the data is clearly presented and formatted to be user-friendly.",
-		},
-		{
-		  title: "14. Integrate Weather Icons from OpenWeatherMap",
-		  requirements:
-			"Use the weather icon code from the OpenWeatherMap API response to display relevant icons on the UI. Use the img element in your JSX and dynamically set the source URL using the icon code provided by the API.",
-		},
-		{
-		  title: "15. Style the Weather App Using CSS",
-		  requirements:
-			"Use your WeatherApp.css file to style the entire weather app, making it visually appealing. Focus on creating a responsive design that works well on both desktop and mobile devices. Use media queries to adjust the layout for different screen sizes.",
-		},
-		{
-		  title: "16. Optimize Error Messages and User Feedback",
-		  requirements:
-			"Enhance the error handling by refining the error messages. Make sure they are informative and clearly guide users when a city is mistyped or when there are connection issues. Use styled components or CSS to ensure the error messages are visually distinct from the rest of the app.",
-		},
-		{
-		  title: "17. Commit Error Handling and UI Feedback",
-		  requirements:
-			"After adding error handling for invalid cities and displaying error messages on the UI, stage and commit the changes with 'git add .' and 'git commit -m \"Added error handling for invalid city names\"'.",
-		},
-		{
-		  title: "18. Test Weather Data for Multiple Cities",
-		  requirements:
-			"Test the weather app by entering several different city names. Check if the correct weather data is retrieved for each city, including both well-known cities and smaller locations. Document any issues and make adjustments as necessary.",
-		},
-		{
-		  title: "19. Final Code Review, Clean-Up, and Commit",
-		  requirements:
-			"Review the entire codebase to optimize performance and clean up any redundant code. Make sure all the necessary comments are added for maintainability. Stage and commit the final changes using 'git add .' and 'git commit -m \"Final commit: Code clean-up and performance optimization\"'. This is the final step before considering the app ready for deployment.",
+			"If you want to push your skills further, try these: Use the useEffect hook to fetch weather data automatically for a default city when the app loads. Save favorite cities using local storage so users can access them later. Add advanced styling with CSS modules or styled-components. Display more detailed weather data, like hourly forecasts or wind speeds, if the API supports it. Implement tabs or a carousel for multi-day forecasts. Commit message: “Added stretch goals for advanced functionality.”",
 		},
 	  ],
 	},
   };
+  
   
 
 
@@ -366,49 +369,17 @@ private _project?: Project;
 		// set the HTML for the webview
 		webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-	    const repoId: string = process.env.REPO_ID ?? '871482895';
-		let tickets: any;
-		if (repoId) {
-			this._project = projects[repoId];
-			if (this._project) {
-				tickets = this._project.tickets.map(ticket => ticket.title);
-				this._view?.webview.postMessage({ type: 'setTickets', value: tickets });
-				this._ticket = this._project.tickets[0]?.title;
-				this._ticketRequirements = this._project.tickets[0]?.requirements;
-			  } else {
-				console.error("Project not found for repoId:", repoId);
-			  }
-		} else {
-			console.error("PROJECT_ID is not defined in the environment variables.");
-		}
+	    // Initialize tickets after webview is ready
+		this._initializeTickets().catch(error => {
+			console.error('Failed to initialize tickets:', error);
+		});
 
+		
 		
 
 		// add an event listener for messages received by the webview
 		webviewView.webview.onDidReceiveMessage(async data => {
 			switch (data.type) {
-				case 'webviewLoaded':
-					{
-						this._view?.webview.postMessage({ type: 'setWorkingState', value: this._workingState });
-						const requestMessage = {
-							type: "addRequest",
-							value: {
-							  text: `👋 Hello, I'm Projexity AI, here to assist you.													  
-												📂 **Project**: *${this._project?.name}*													  
-												📝 **Description**: ${this._project?.description}													  
-												✅ **When you're ready**: Click the "Check Code" button when you feel you're finished, and I'll let you know if you're good to move on to the next ticket!													  
-												🔍 Please choose the ticket you are currently working on at the bottom, so I can help if you get stuck!													  													  
-												🚀 Let's get started!`,
-							  parentMessageId: this._conversation?.parentMessageId
-							},
-						  };
-						  
-						  
-					
-						this._view?.webview.postMessage(requestMessage);
-						// this.loadAwesomePrompts();
-						break;
-					}
 				case 'loadPrompts':
 					{
 						// force prompts updating
@@ -780,6 +751,93 @@ response.data.on('data', (chunk: Buffer) => {
 			  .replace('{{jqueryuicssUri}}', jqueryuicssUri.toString())
 			  .replace('{{indexcssUri}}', indexcssUri.toString())
 			  .replace('{{scriptUri}}', scriptUri.toString());
+	}
+
+	private async _initializeTickets() {
+		const repoId: string = process.env.REPO_ID ?? '871482895';
+		
+		try {
+			// Wait for webview to be ready
+			if (!this._view?.visible) {
+				console.log('Waiting for webview to become visible...');
+				await new Promise<void>((resolve) => {
+					const disposable = vscode.window.onDidChangeVisibleTextEditors(() => {
+						if (this._view?.visible) {
+							disposable.dispose();
+							resolve();
+						}
+					});
+				});
+			}
+	
+			await new Promise(resolve => setTimeout(resolve, 3000));
+	
+			console.log('Webview is visible, proceeding with initialization');
+	
+			// Ensure webview is available
+			if (!this._view?.webview) {
+				throw new Error('Webview not available');
+			}
+	
+			this._project = projects[repoId];
+			if (!this._project) {
+				throw new Error(`Project not found for repoId: ${repoId}`);
+			}
+	
+			const tickets = this._project.tickets.map(ticket => ticket.title);
+			console.log('Prepared tickets:', tickets);
+	
+			// Add retry logic for sending message
+			let retryCount = 0;
+			const maxRetries = 3;
+			
+			while (retryCount < maxRetries) {
+				try {
+					console.log(`Attempt ${retryCount + 1} to send tickets to webview`);
+					await this._view.webview.postMessage({ type: 'setTickets', value: tickets });
+					this._ticket = this._project.tickets[0]?.title;
+					this._ticketRequirements = this._project.tickets[0]?.requirements;
+					
+					// Send welcome message after tickets are initialized
+					const welcomeMessage = {
+						type: "addRequest",
+						value: {
+							text: `👋 Hello, I'm Projexity AI, here to assist you.													  
+													📂 **Project**: *${this._project?.name}*													  
+													📝 **Description**: ${this._project?.description}													  
+													✅ **When you're ready**: Click the "Check Code" button when you feel you're finished, and I'll let you know if you're good to move on to the next ticket!													  
+													🔍 Please choose the ticket you are currently working on at the bottom, so I can help if you get stuck!													  													  
+													🚀 Let's get started!`,
+							parentMessageId: this._conversation?.parentMessageId
+						},
+					};
+					
+					
+					await this._view.webview.postMessage(welcomeMessage);
+					console.log('Successfully sent tickets and welcome message to webview');
+					break;
+				} catch (error) {
+					retryCount++;
+					console.error(`Failed attempt ${retryCount}:`, error);
+					if (retryCount === maxRetries) {
+						throw error;
+					}
+					await new Promise(resolve => setTimeout(resolve, 1000));
+				}
+			}
+			
+			vscode.window.showInformationMessage(`Loaded ${tickets.length} tickets for ${this._project.name}`);
+		} catch (error) {
+			console.error('Error initializing tickets:', error);
+			vscode.window.showErrorMessage('Failed to load project tickets. Please reload the extension.');
+			
+			if (this._view?.webview) {
+				this._view.webview.postMessage({ 
+					type: 'setTickets', 
+					value: ['Please reload the extension'] 
+				});
+			}
+		}
 	}
 }
 

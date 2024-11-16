@@ -143,36 +143,7 @@
     </div>
 </body>
 <script>
-    window.addEventListener('message', event => {
-    const message = event.data;
-    switch (message.type) {
-        case 'setTickets':
-            const tickets = message.value;
-            const ticketSelect = document.getElementById('ticket-select');
-            // Remove existing options
-            ticketSelect.innerHTML = '';
-            // Add options
-            tickets.forEach(ticket => {
-                const option = document.createElement('option');
-                option.value = ticket;
-                option.text = ticket;
-                ticketSelect.add(option);
-            });
-            break;
-        // Handle other message types
-    }
-});
-
-// Add event listener to ticket-select dropdown
-const ticketSelect = document.getElementById('ticket-select');
-ticketSelect.addEventListener('change', () => {
-    const selectedTicket = ticketSelect.value;
-    // Send message to the extension
-    vscode.postMessage({
-        type: 'ticketSelected',
-        value: selectedTicket
-    });
-});
+   
 
 </script>
 

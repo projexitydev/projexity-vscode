@@ -277,7 +277,7 @@ interface ChatEvent {
 
   // vscode.postMessage({ type: 'webviewLoaded' });
 
-  $(document).ready(function () {
+  document.addEventListener('DOMContentLoaded', () => {
     // Listen for keyup events on the prompt input element
     const promptInput = $('#prompt-input');
     promptInput.on('keyup', (e: JQuery.KeyUpEvent) => {
@@ -316,26 +316,36 @@ interface ChatEvent {
     
 
     // COMMENT THIS BACK OUT WHEN WE ADD MULTIPLE PROJECTS
-    // window.addEventListener('message', event => {
-    //     const message = event.data;
-    //     switch (message.type) {
-    //         case 'setTickets':
-    //             const tickets = message.value;
-    //             const ticketSelect = document.getElementById('ticket-select') as HTMLInputElement;
-    //             // Remove existing options
-    //             ticketSelect.innerHTML = '';
-    //             // Add options
-    //             tickets.forEach((ticket: string) => {
-    //                 const option = document.createElement('option');
-    //                 option.value = ticket;
-    //                 option.text = ticket;
-    //                 ticketSelect.appendChild(option);
-    //             });
-    //             break;
-    //         // Handle other message types if necessary
-    //     }
-    // });
-
+    window.addEventListener('message', event => {
+      const message = event.data;
+      try {
+          console.log('Received message:', message);
+          switch (message.type) {
+              case 'setTickets':
+                  const tickets = message.value;
+                  console.log('Processing tickets:', tickets);
+                  const ticketSelect = document.getElementById('ticket-select');
+                  if (!ticketSelect) {
+                      console.error('Ticket select element not found');
+                      return;
+                  }
+                  // Remove existing options
+                  ticketSelect.innerHTML = '';
+                  // Add options
+                  tickets.forEach((ticket: string) => {
+                      const option = document.createElement('option');
+                      option.value = ticket;
+                      option.text = ticket;
+                      ticketSelect.appendChild(option);
+                      console.log('Added ticket:', ticket);
+                  });
+                  console.log('Finished loading tickets');
+                  break;
+          }
+      } catch (error) {
+          console.error('Error handling message:', error, message);
+      }
+  });
     
 
     $('#send-request').on('click', () => {
